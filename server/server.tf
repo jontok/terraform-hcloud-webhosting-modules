@@ -11,6 +11,11 @@ resource "hcloud_server" "server" {
   location     = var.region
   firewall_ids = [var.network_id]
   ssh_keys     = ["${hcloud_ssh_key.default.id}"]
+  
+  
+  user_data   = var.cloud_init!="" ? file(var.cloud_init) : ""
+    
+  
 
   network {
     network_id = var.network_id

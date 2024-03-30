@@ -63,3 +63,8 @@ variable "ipv6" {
   description = "enable ipv6"
   default = false
 }
+
+variable "cloud_init" {
+  type = string
+  default = ""
+}
