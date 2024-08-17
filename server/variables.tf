@@ -1,5 +1,5 @@
 variable "hcloud_token" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -18,6 +18,10 @@ variable "region" {
 variable "ssh_key_pub" {
   type = string
 }
+variable "ssh_key_id" {
+  type    = string
+  default = ""
+}
 
 variable "server_count" {
   type = string
@@ -28,23 +32,23 @@ variable "server_type" {
 }
 
 variable "server_image" {
-  type = string
+  type    = string
   default = "ubuntu-22.04"
 }
 
 variable "server_keepdisk" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "keep disk for easy resizing"
 }
 
 variable "firewall_id" {
-  type = string
+  type        = string
   description = "Firewall id"
 }
 
 variable "network_id" {
-  type = string
+  type        = string
   description = "Network id"
 }
 
@@ -53,18 +57,18 @@ variable "server_ips" {
 }
 
 variable "ipv4" {
-  type = bool
+  type        = bool
   description = "enable ipv4"
-  default = false
+  default     = false
 }
 
 variable "ipv6" {
-  type = bool
+  type        = bool
   description = "enable ipv6"
-  default = false
+  default     = false
 }
 
 variable "cloud_init" {
-  type = string
+  type    = string
   default = ""
 }
