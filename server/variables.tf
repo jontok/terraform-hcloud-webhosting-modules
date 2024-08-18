@@ -18,9 +18,9 @@ variable "region" {
 variable "ssh_key_pub" {
   type = string
 }
-variable "ssh_key_id" {
-  type    = string
-  default = ""
+variable "ssh_key_ids" {
+  type    = list(string)
+  default = [""]
 }
 
 variable "server_count" {

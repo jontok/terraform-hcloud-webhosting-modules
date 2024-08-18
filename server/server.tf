@@ -10,7 +10,7 @@ resource "hcloud_server" "server" {
   server_type  = var.server_type
   location     = var.region
   firewall_ids = [var.firewall_id]
-  ssh_keys     = var.ssh_key_pub == "bashtion" ? var.ssh_key_id : ["${hcloud_ssh_key.default.id}"]
+  ssh_keys     = var.ssh_key_pub == "node" ? var.ssh_key_ids : ["${hcloud_ssh_key.default.id}"]
 
 
   user_data = var.cloud_init != "" ? file(var.cloud_init) : ""
