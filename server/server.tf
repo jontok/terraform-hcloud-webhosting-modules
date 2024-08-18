@@ -1,4 +1,5 @@
 resource "hcloud_ssh_key" "default" {
+  count      = var.ssh_key_pub == "node" ? 1 : 0
   name       = "${var.project}-${var.env}-key"
   public_key = file("${var.ssh_key_pub}.pub")
 }
