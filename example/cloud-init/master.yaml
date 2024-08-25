@@ -1,0 +1,57 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - docker.io
+  - apt-transport-https
+  - curl
+
+write_files:
+  - path: /etc/kubernetes/setup.sh
+    content: |
+      #!/bin/bash
+      # Disable swap
+      swapoff -a
+      sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+      
+      # Install Kubernetes packages
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+      echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+      apt-get update
+      apt-get install -y kubelet kubeadm kubectl
+      apt-mark hold kubelet kubeadm kubectl
+
+      # Initialize Kubernetes cluster (for master node)
+      kubeadm init --apiserver-advertise-address=$(hostname -I | awk '{print $1}') --pod-network-cidr=10.0.100.96/28
+
+      # Set up kubeconfig for the ubuntu user (so kubectl can be used without sudo)
+      mkdir -p /home/ubuntu/.kube
+      cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+      chown ubuntu:ubuntu /home/ubuntu/.kube/config
+
+      # Apply a Pod Network Add-on (Flannel in this case)
+      export KUBECONFIG=/etc/kubernetes/admin.conf
+      kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+      # Enable kubelet service
+      systemctl enable kubelet && systemctl start kubelet
+
+  - path: /etc/systemd/system/k8s-setup.service
+    content: |
+      [Unit]
+      Description=Kubernetes Setup
+      After=docker.service
+
+      [Service]
+      ExecStart=/bin/bash /etc/kubernetes/setup.sh
+      Restart=on-failure
+      RestartSec=10
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable k8s-setup.service
+  - systemctl start k8s-setup.service
+
+final_message: "Kubernetes setup is complete!"

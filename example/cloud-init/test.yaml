@@ -1,0 +1,10 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - curl
+
+write_files:
+runcmd:
+  - "echo TEST"
+final_message: "Cloud Init Test finished"
